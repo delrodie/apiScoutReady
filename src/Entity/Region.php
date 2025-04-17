@@ -3,11 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\RegionInput;
+use App\DTO\RegionOutput;
 use App\Repository\RegionRepository;
+use App\State\RegionProcessor;
+use App\State\RegionProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RegionRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: RegionInput::class,
+    output: RegionOutput::class,
+    provider: RegionProvider::class,
+    processor: RegionProcessor::class,
+)]
 class Region
 {
     #[ORM\Id]

@@ -4,11 +4,19 @@ namespace App\Service;
 
 use App\Entity\Asn;
 use App\Repository\AsnRepository;
+use App\Repository\DistrictRepository;
+use App\Repository\GroupeRepository;
+use App\Repository\RegionRepository;
+use App\Repository\ScoutRepository;
 
 class AllRepositories
 {
     public function __construct(
         private AsnRepository $asnRepository,
+        private RegionRepository $regionRepository,
+        private DistrictRepository $districtRepository,
+        private GroupeRepository $groupeRepository,
+        private ScoutRepository $scoutRepository
     )
     {
     }
@@ -34,5 +42,15 @@ class AllRepositories
     public function getAllAsn(): array
     {
         return $this->asnRepository->findAll();
+    }
+
+    public function getOneRegion(?int $id)
+    {
+        return $this->regionRepository->findOneBy(['id' => $id]);
+    }
+
+    public function getAllRegion()
+    {
+        return $this->regionRepository->findAll();
     }
 }
