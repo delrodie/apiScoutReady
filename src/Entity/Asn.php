@@ -3,11 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\AsnInput;
+use App\DTO\AsnOutput;
 use App\Repository\AsnRepository;
+use App\State\AsnProcessor;
+use App\State\AsnProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AsnRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: AsnInput::class,
+    output: AsnOutput::class,
+    provider: AsnProvider::class,
+    processor: AsnProcessor::class
+)]
 class Asn
 {
     #[ORM\Id]
