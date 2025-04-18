@@ -53,4 +53,19 @@ class AllRepositories
     {
         return $this->regionRepository->findAll();
     }
+
+    public function getOneDistrict(?int $id)
+    {
+        return $this->districtRepository->findOneBy(['id' => $id]);
+    }
+
+    public function getDistrictsByRegionId(?int $id)
+    {
+        return $this->districtRepository->findBy(['region' => $id], ['nom' => "ASC"]);
+    }
+
+    public function getAllDistrict()
+    {
+        return $this->districtRepository->findAll();
+    }
 }

@@ -2,12 +2,26 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\DistrictInput;
+use App\DTO\DistrictOutput;
 use App\Repository\DistrictRepository;
+use App\State\DistrictProcessor;
+use App\State\DistrictProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DistrictRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: DistrictInput::class,
+    output: DistrictOutput::class,
+    provider: DistrictProvider::class,
+    processor: DistrictProcessor::class,
+)]
+#[ApiFilter(SearchFilter::class, properties: ['region.id' => 'exact'])]
 class District
 {
     #[ORM\Id]
