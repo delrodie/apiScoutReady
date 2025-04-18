@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Groupe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,6 +15,33 @@ class GroupeRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Groupe::class);
+    }
+
+    public function findByQuery(?int $district = null, ?int $region = null)
+    {
+        $query = $this->query();
+        if ($district){
+            $query->where('d.id = :district')
+                ->setParameter('district', $district);
+        }
+
+        if ($region){
+            $query->where('r.id = :region')
+                ->setParameter('region', $region);
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function query(): QueryBuilder
+    {
+        return $this->createQueryBuilder('g')
+            ->addSelect('d')
+            ->addSelect('r')
+            ->addSelect('a')
+            ->leftJoin('g.district', 'd')
+            ->leftJoin('d.region', 'r')
+            ->leftJoin('r.asn', 'a');
     }
 
     //    /**

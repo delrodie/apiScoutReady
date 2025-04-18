@@ -2,12 +2,26 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\GroupeInput;
+use App\DTO\GroupeOutput;
 use App\Repository\GroupeRepository;
+use App\State\GroupeProcessor;
+use App\State\GroupeProvider;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupeRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: GroupeInput::class,
+    output: GroupeOutput::class,
+    provider: GroupeProvider::class,
+    processor: GroupeProcessor::class
+)]
+//#[ApiFilter(SearchFilter::class, properties: ['district.id' => 'exact', 'region.id' => 'exact'])]
 class Groupe
 {
     #[ORM\Id]

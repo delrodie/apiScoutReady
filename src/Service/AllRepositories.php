@@ -68,4 +68,18 @@ class AllRepositories
     {
         return $this->districtRepository->findAll();
     }
+
+    public function getOneGroupe(?int $id)
+    {
+        return $this->groupeRepository->findOneBy(['id' => $id]);
+    }
+
+    public function getAllGroupeOrByQuery(?int $district = null, ?int $region = null)
+    {
+        return match (true) {
+            !is_null($district) => $this->groupeRepository->findByQuery($district),
+            !is_null($region) => $this->groupeRepository->findByQuery(null, $region),
+            default => $this->groupeRepository->findAll()
+        };
+    }
 }
