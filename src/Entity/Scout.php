@@ -3,12 +3,23 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\ScoutInput;
+use App\DTO\ScoutOutput;
 use App\Repository\ScoutRepository;
+use App\State\ScoutProcessor;
+use App\State\ScoutProvider;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ScoutRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: ScoutInput::class,
+    output: ScoutOutput::class,
+    provider: ScoutProvider::class,
+    processor: ScoutProcessor::class
+)]
 class Scout
 {
     #[ORM\Id]

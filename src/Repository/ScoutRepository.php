@@ -16,6 +16,72 @@ class ScoutRepository extends ServiceEntityRepository
         parent::__construct($registry, Scout::class);
     }
 
+    public function findOneScout(
+        ?int $id = null,
+        ?string $code = null,
+        ?string $matricule = null
+    )
+    {
+        $query = $this->query();
+        if ($id){
+            $query->where('s.id = :id')
+                ->setParameter('id', $id);
+        }
+
+        if ($code){
+            $query->where('s.code = :code')
+                ->setParameter('code', $code);
+        }
+
+        if ($matricule){
+            $query->where('s.matricule = :matricule')
+                ->setParameter('matricule', $matricule);
+        }
+
+        return $query->getQuery()->getOneOrNullResult();
+    }
+
+    public function findAllScoutOrByQuery(?int $groupe = null, ?int $district = null, ?int $region = null, ?int $asn = null)
+    {
+        $query = $this->query();
+        if ($groupe){
+            $query->where('g.id = :groupe')
+                ->setParameter('groupe', $groupe);
+        }
+
+        if ($district){
+            $query->where('d.id = :district')
+                ->setParameter('district', $district);
+        }
+
+        if ($region){
+            $query->where('r.id = :region')
+                ->setParameter('region', $region);
+        }
+
+        if ($asn){
+            $query->where('a.id = :asn')
+                ->setParameter('asn', $asn);
+        }
+
+        return $query->orderBy('s.nom', "ASC")
+                    ->addOrderBy('s.prenom', "ASC")
+                    ->getQuery()->getResult();
+    }
+
+    public function query()
+    {
+        return $this->createQueryBuilder('s')
+            ->addSelect('g')
+            ->addSelect('d')
+            ->addSelect('r')
+            ->addSelect('a')
+            ->leftJoin('s.groupe', 'g')
+            ->leftJoin('g.district', 'd')
+            ->leftJoin('d.region', 'r')
+            ->leftJoin('r.asn', 'a');
+    }
+
     //    /**
     //     * @return Scout[] Returns an array of Scout objects
     //     */

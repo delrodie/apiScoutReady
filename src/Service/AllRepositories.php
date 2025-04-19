@@ -82,4 +82,24 @@ class AllRepositories
             default => $this->groupeRepository->findAll()
         };
     }
+
+    public function getOneScout(?int $id = null, ?string $code = null, ?string $matricule= null)
+    {
+        return match (true){
+            !is_null($id) => $this->scoutRepository->findOneScout($id),
+            !is_null($code) => $this->scoutRepository->findOneScout(null, $code),
+            !is_null($matricule) => $this->scoutRepository->findOneScout(null, null, $matricule),
+        };
+    }
+
+    public function getAllScoutOrByQuery(?int $groupe = null, ?int $district = null, ?int $region = null, ?int $asn = null)
+    {
+        return match (true){
+            !is_null($groupe) => $this->scoutRepository->findAllScoutOrByQuery($groupe),
+            !is_null($district) => $this->scoutRepository->findAllScoutOrByQuery(null, $district),
+            !is_null($region) => $this->scoutRepository->findAllScoutOrByQuery(null, null, $region),
+            !is_null($asn) => $this->scoutRepository->findAllScoutOrByQuery(null, null, null, $asn),
+            default => $this->scoutRepository->findAllScoutOrByQuery(),
+        };
+    }
 }

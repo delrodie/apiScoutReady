@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
     provider: GroupeProvider::class,
     processor: GroupeProcessor::class
 )]
-//#[ApiFilter(SearchFilter::class, properties: ['district.id' => 'exact', 'region.id' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['district.id' => 'exact', 'region.id' => 'exact'])]
 class Groupe
 {
     #[ORM\Id]
