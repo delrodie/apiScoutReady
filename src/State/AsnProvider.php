@@ -21,21 +21,13 @@ class AsnProvider implements ProviderInterface
             if (!$asn){
                 throw new NotFoundHttpException("Aucune ASN touvée avec l'identifiant: {$uriVariables['id']}.");
             }
-            return $this->mapToOutput($asn);
+            return AsnOutput::mapToOutput($asn);
         }
 
         $asns = $this->allRepositories->getAllAsn();
-        return array_map([$this, 'mapToOutput'], $asns);
+        return array_map([AsnOutput::class, 'mapToOutput'], $asns);
     }
 
 
-    private function mapToOutput($asn): AsnOutput
-    {
-        $dto = new AsnOutput();
-        $dto->id = $asn->getId();
-        $dto->sigle = $asn->getSigle();
-        $dto->nom = $asn->getNom();
 
-        return $dto;
-    }
 }

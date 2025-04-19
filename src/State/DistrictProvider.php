@@ -25,7 +25,7 @@ class DistrictProvider implements ProviderInterface
             $district = $this->allRepositories->getOneDistrict($uriVariables['id']);
             if (!$district) throw new NotFoundHttpException("Aucun district trouvé avec l'ID {$uriVariables['id']}.");
 
-            return $this->mapToOut($district);
+            return DistrictOutput::mapToOut($district);
         }
 
         // Filtre par ID de region ou tous les districts
@@ -37,16 +37,7 @@ class DistrictProvider implements ProviderInterface
             $districts = $this->allRepositories->getAllDistrict();
         }
 
-        return array_map([$this, 'mapToOut'], $districts);
+        return array_map([DistrictOutput::class, 'mapToOut'], $districts);
     }
 
-    private function mapToOut($district)
-    {
-        $dto = new DistrictOutput();
-        $dto->id = $district->getId();
-        $dto->nom = $district->getNom();
-        $dto->region = $district->getRegion();
-
-        return $dto;
-    }
 }

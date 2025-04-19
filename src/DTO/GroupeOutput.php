@@ -17,9 +17,9 @@ class GroupeOutput
         $dto = new self();
         $dto->id = $groupe->getId();
         $dto->paroisse = $groupe->getParoisse();
-        $dto->district = $groupe->getDistrict();
-        $dto->region = $groupe->getDistrict()->getRegion();
-        $dto->asn = $groupe->getDistrict()->getRegion()->getAsn();
+        $dto->district = DistrictOutput::mapToOut($groupe->getDistrict()) ;
+//        $dto->region = $groupe->getDistrict()->getRegion();
+//        $dto->asn = $groupe->getDistrict()->getRegion()->getAsn();
 
         return $dto;
     }

@@ -4,6 +4,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\DTO\DistrictOutput;
 use App\Entity\District;
 use App\Service\AllRepositories;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,6 +49,6 @@ class DistrictProcessor implements ProcessorInterface
         $this->entityManager->persist($district);
         $this->entityManager->flush();
 
-        return $district;
+        return DistrictOutput::mapToOut($district);
     }
 }

@@ -51,6 +51,9 @@ class Scout
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $telephone = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $telephoneParent = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
@@ -68,6 +71,9 @@ class Scout
 
     #[ORM\ManyToOne]
     private ?Groupe $groupe = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $qrCode = null;
 
     public function getId(): ?int
     {
@@ -170,6 +176,18 @@ class Scout
         return $this;
     }
 
+    public function isTelephoneParent(): ?bool
+    {
+        return $this->telephoneParent;
+    }
+
+    public function setTelephoneParent(?bool $telephoneParent): static
+    {
+        $this->telephoneParent = $telephoneParent;
+
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -238,6 +256,18 @@ class Scout
     public function setGroupe(?Groupe $groupe): static
     {
         $this->groupe = $groupe;
+
+        return $this;
+    }
+
+    public function getQrCode(): ?string
+    {
+        return $this->qrCode;
+    }
+
+    public function setQrCode(?string $qrCode): static
+    {
+        $this->qrCode = $qrCode;
 
         return $this;
     }

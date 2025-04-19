@@ -43,9 +43,9 @@ class ScoutOutput
         $dto->branche = $scout->getBranche();
         $dto->statut = $scout->getStatut();
         $dto->groupe = GroupeOutput::mapToOut($scout->getGroupe()) ;
-        $dto->district = $scout->getGroupe()->getDistrict();
-        $dto->region = $scout->getGroupe()->getDistrict()->getRegion();
-        $dto->asn = $scout->getGroupe()->getDistrict()->getRegion()->getAsn();
+//        $dto->district = $scout->getGroupe()->getDistrict();
+//        $dto->region = $scout->getGroupe()->getDistrict()->getRegion();
+//        $dto->asn = $scout->getGroupe()->getDistrict()->getRegion()->getAsn();
 
         return $dto;
     }

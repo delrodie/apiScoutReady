@@ -37,13 +37,13 @@ class ScoutProvider implements ProviderInterface
 
         if ($code){
             $scout = $this->allRepositories->getOneScout(null, $code);
-            if (!$scout) throw new NotFoundHttpException("Le scout avec le code {$code} n'a pas été trouvé");
+            if (!$scout) throw new NotFoundHttpException("Oups!! Le scout ayant le code {$code} n'a pas été trouvé");
             return ScoutOutput::mapToOut($scout);
         }
 
         if ($matricule){
             $scout = $this->allRepositories->getOneScout(null, null, $matricule);
-            if (!$scout) throw new NotFoundHttpException("Le scout avec le matricule {$matricule} n'existe pas");
+            if (!$scout) throw new NotFoundHttpException("Oups!! Le scout ayant le matricule {$matricule} n'a pas été trouvé");
             return ScoutOutput::mapToOut($scout);
         }
 

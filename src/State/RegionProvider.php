@@ -20,22 +20,12 @@ class RegionProvider implements ProviderInterface
             $region = $this->allRepositories->getOneRegion($uriVariables['id']);
             if (!$region) throw  new NotFoundHttpException("Aucune region trouvée avec l'identifiant {$uriVariables['id']}.");
 
-            return $this->mapToOut($region);
+            return RegionOutput::mapToOut($region);
         }
 
         $regions = $this->allRepositories->getAllRegion();
 
-        return array_map([$this, 'mapToOut'], $regions);
+        return array_map([RegionOutput::class, 'mapToOut'], $regions);
     }
 
-    private function mapToOut($region): RegionOutput
-    {
-        $dto = new RegionOutput();
-        $dto->id = $region->getId();
-        $dto->nom = $region->getNom();
-        $dto->symbolique = $region->getSymbolique();
-        $dto->asn = $region->getAsn();
-
-        return $dto;
-    }
 }

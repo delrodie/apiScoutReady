@@ -4,6 +4,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\DTO\RegionOutput;
 use App\Entity\Region;
 use App\Service\AllRepositories;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,6 +49,6 @@ class RegionProcessor implements ProcessorInterface
         $this->entityManager->persist($region);
         $this->entityManager->flush();
 
-        return $region;
+        return RegionOutput::mapToOut($region);
     }
 }

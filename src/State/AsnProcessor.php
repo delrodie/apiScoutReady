@@ -4,6 +4,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\DTO\AsnOutput;
 use App\Entity\Asn;
 use App\Service\AllRepositories;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +16,7 @@ class AsnProcessor implements ProcessorInterface
     {
     }
 
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Asn
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): AsnOutput
     {
         // Gestion de la suppression
         if ($operation->getMethod() === 'DELETE' && isset($uriVariables['id'])) {
@@ -41,6 +42,6 @@ class AsnProcessor implements ProcessorInterface
         $this->entityManager->persist($asn);
         $this->entityManager->flush();
 
-        return $asn;
+        return AsnOutput::mapToOutput($asn);
     }
 }
