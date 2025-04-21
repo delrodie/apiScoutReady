@@ -23,4 +23,13 @@ class Gestion
 
         return $code;
     }
+
+    /**
+     * @param $str
+     * @return string
+     */
+    public function validForm($str): string
+    {
+        return htmlspecialchars(stripslashes(trim($str)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
 }

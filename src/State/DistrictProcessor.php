@@ -7,6 +7,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\DTO\DistrictOutput;
 use App\Entity\District;
 use App\Service\AllRepositories;
+use App\Service\Gestion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -15,6 +16,7 @@ class DistrictProcessor implements ProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private AllRepositories $allRepositories,
+        private Gestion $gestion,
     )
     {
     }
@@ -43,7 +45,7 @@ class DistrictProcessor implements ProcessorInterface
         $region = $this->allRepositories->getOneRegion($data->region);
         if (!$region) throw new NotFoundHttpException("Region introuvable avec l'ID {$data->region} !");
 
-        $district->setNom($data->nom);
+        $district->setNom($this->gestion->validForm($data->nom));
         $district->setRegion($region);
 
         $this->entityManager->persist($district);

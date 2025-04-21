@@ -7,6 +7,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\DTO\RegionOutput;
 use App\Entity\Region;
 use App\Service\AllRepositories;
+use App\Service\Gestion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -15,6 +16,7 @@ class RegionProcessor implements ProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private AllRepositories $allRepositories,
+        private Gestion $gestion,
     )
     {
     }
@@ -43,8 +45,8 @@ class RegionProcessor implements ProcessorInterface
         if (!$asn) throw new NotFoundHttpException("ASN introuvable avec l'ID {$data->asn} !");
 
         $region->setAsn($asn);
-        $region->setNom($data->nom);
-        $region->setSymbolique($data->symbolique);
+        $region->setNom($this->gestion->validForm($data->nom));
+        $region->setSymbolique($this->gestion->validForm($data->symbolique));
 
         $this->entityManager->persist($region);
         $this->entityManager->flush();

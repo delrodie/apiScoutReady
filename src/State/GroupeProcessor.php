@@ -7,6 +7,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\DTO\GroupeOutput;
 use App\Entity\Groupe;
 use App\Service\AllRepositories;
+use App\Service\Gestion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -14,7 +15,8 @@ class GroupeProcessor implements ProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private AllRepositories $allRepositories
+        private AllRepositories $allRepositories,
+        private Gestion $gestion
     )
     {
     }
@@ -42,7 +44,7 @@ class GroupeProcessor implements ProcessorInterface
         $district = $this->allRepositories->getOneDistrict($data->district);
         if (!$district) throw new NotFoundHttpException("Echec! Le district associé n'a pas été trouvé");
 
-        $groupe->setParoisse($data->paroisse);
+        $groupe->setParoisse($this->gestion->validForm($data->paroisse));
         $groupe->setDistrict($district);
         $this->entityManager->persist($groupe);
         $this->entityManager->flush();

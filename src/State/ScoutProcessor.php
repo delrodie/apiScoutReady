@@ -52,17 +52,18 @@ class ScoutProcessor implements ProcessorInterface
 
         $scout->setGroupe($groupe);
         $scout->setCode($this->_gestion->generateCode($data->statut));
-        $scout->setMatricule($data->matricule);
-        $scout->setNom($data->nom);
-        $scout->setPrenom($data->prenom);
+        $scout->setMatricule($this->_gestion->validForm($data->matricule));
+        $scout->setNom(strtoupper($this->_gestion->validForm($data->nom)));
+        $scout->setPrenom(strtoupper($this->_gestion->validForm($data->prenom)));
         $scout->setDateNaissance($dateNaissance);
-        $scout->setLieuNaissance($data->lieuNaissance);
-        $scout->setSexe($data->sexe);
-        $scout->setTelephone($data->telephone);
-        $scout->setEmail($data->email);
-        $scout->setFonction($data->fonction);
-        $scout->setBranche($data->branche);
-        $scout->setStatut($data->statut);
+        $scout->setLieuNaissance($this->_gestion->validForm($data->lieuNaissance));
+        $scout->setSexe(strtoupper($this->_gestion->validForm($data->sexe)));
+        $scout->setTelephone($this->_gestion->validForm($data->telephone));
+        $scout->setEmail($this->_gestion->validForm($data->email));
+        $scout->setFonction($this->_gestion->validForm($data->fonction));
+        $scout->setBranche($this->_gestion->validForm($data->branche));
+        $scout->setStatut($this->_gestion->validForm($data->statut));
+        $scout->setTelephoneParent($this->_gestion->validForm($data->telephoneParent));
 
         $this->entityManager->persist($scout);
         $this->entityManager->flush();

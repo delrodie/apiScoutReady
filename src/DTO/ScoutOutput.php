@@ -21,9 +21,8 @@ class ScoutOutput
     public ?string $branche = null;
     public ?string $statut = null;
     public ?object $groupe = null;
-    public ?object $district = null;
-    public ?object $region = null;
-    public ?object $asn = null;
+    public ?bool $telephoneParent = null;
+    public ?string $qrCode = null;
 
     public static function mapToOut(Scout $scout): self
     {
@@ -42,10 +41,9 @@ class ScoutOutput
         $dto->fonction = $scout->getFonction();
         $dto->branche = $scout->getBranche();
         $dto->statut = $scout->getStatut();
+        $dto->telephoneParent = $scout->isTelephoneParent();
+        $dto->qrCode = $scout->getQrCode();
         $dto->groupe = GroupeOutput::mapToOut($scout->getGroupe()) ;
-//        $dto->district = $scout->getGroupe()->getDistrict();
-//        $dto->region = $scout->getGroupe()->getDistrict()->getRegion();
-//        $dto->asn = $scout->getGroupe()->getDistrict()->getRegion()->getAsn();
 
         return $dto;
     }

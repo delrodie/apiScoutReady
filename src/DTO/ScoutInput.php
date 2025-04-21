@@ -39,6 +39,8 @@ class ScoutInput
     #[Assert\NotBlank(message: 'Le statut ne peut être null')]
     public ?string $statut = null;
 
+    public ?bool $telephoneParent = null;
+
     #[Assert\NotBlank(message: "Le groupe est requis")]
     public ?int $groupe = null;
 }
