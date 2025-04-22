@@ -3,9 +3,12 @@
 namespace App\DTO;
 
 use App\Entity\Scout;
+use phpDocumentor\Reflection\Types\This;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ScoutOutput
 {
+
     public ?int $id = null;
     public ?string $code = null;
     public ?string $matricule = null;
@@ -20,11 +23,11 @@ class ScoutOutput
     public ?string $fonction = null;
     public ?string $branche = null;
     public ?string $statut = null;
-    public ?object $groupe = null;
     public ?bool $telephoneParent = null;
     public ?string $qrCode = null;
+    public ?object $groupe = null;
 
-    public static function mapToOut(Scout $scout): self
+    public static function mapToOut(Scout $scout,string $baseUrl): self
     {
         $dto = new self();
         $dto->id = $scout->getId();
@@ -42,7 +45,7 @@ class ScoutOutput
         $dto->branche = $scout->getBranche();
         $dto->statut = $scout->getStatut();
         $dto->telephoneParent = $scout->isTelephoneParent();
-        $dto->qrCode = $scout->getQrCode();
+        $dto->qrCode = $baseUrl.'/qrcode/'.$scout->getQrCode();
         $dto->groupe = GroupeOutput::mapToOut($scout->getGroupe()) ;
 
         return $dto;

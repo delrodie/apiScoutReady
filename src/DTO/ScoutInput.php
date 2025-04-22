@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 class ScoutInput
 {
@@ -32,7 +33,13 @@ class ScoutInput
 
     #[Assert\Email(message: "L'email n'est pas valide")]
     public ?string $email = null;
-    public ?string $photo = null;
+
+    #[Assert\File(
+        maxSize: '5M',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+        mimeTypesMessage: "Merci d'uploader image JPEG ou PNG valide."
+    )]
+    public ?UploadedFile $photo = null;
     public ?string $fonction = null;
     public ?string $branche = null;
 

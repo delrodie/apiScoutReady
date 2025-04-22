@@ -8,23 +8,27 @@ use App\DTO\ScoutOutput;
 use App\Service\AllRepositories;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ScoutProvider implements ProviderInterface
 {
     public function __construct(
         private AllRepositories $allRepositories,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private ScoutOutput $scoutOutput,
+        private UrlGeneratorInterface $urlGenerator
     )
     {
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $baseUrl = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost();
         if (isset($uriVariables['id'])){
             $scout = $this->allRepositories->getOneScout($uriVariables['id']);
             if (!$scout) throw new NotFoundHttpException("Aucun scout n'a été trouvé avec l'ID {$uriVariables['id']}");
 
-            return ScoutOutput::mapToOut($scout);
+            return ScoutOutput::mapToOut($scout, $baseUrl);
         }
 
         $request = $this->requestStack->getCurrentRequest();
@@ -38,13 +42,13 @@ class ScoutProvider implements ProviderInterface
         if ($code){
             $scout = $this->allRepositories->getOneScout(null, $code);
             if (!$scout) throw new NotFoundHttpException("Oups!! Le scout ayant le code {$code} n'a pas été trouvé");
-            return ScoutOutput::mapToOut($scout);
+            return ScoutOutput::mapToOut($scout, $baseUrl);
         }
 
         if ($matricule){
             $scout = $this->allRepositories->getOneScout(null, null, $matricule);
             if (!$scout) throw new NotFoundHttpException("Oups!! Le scout ayant le matricule {$matricule} n'a pas été trouvé");
-            return ScoutOutput::mapToOut($scout);
+            return ScoutOutput::mapToOut($scout, null);
         }
 
         $scouts = match (true){
@@ -55,6 +59,9 @@ class ScoutProvider implements ProviderInterface
             default => $this->allRepositories->getAllScoutOrByQuery(),
         };
 
-        return array_map([ScoutOutput::class, 'mapToOut'], $scouts);
+        return array_map(fn($scout) => ScoutOutput::mapToOut($scout, $baseUrl), $scouts);
+
+
+//        return array_map([ScoutOutput::class, 'mapToOut'], $scouts);
     }
 }
