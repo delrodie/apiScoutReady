@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ScoutRepository::class)]
 #[ApiResource(
-    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    inputFormats: ['multipart' => ['multipart/form-data']],
     outputFormats: ['json' => ['application/json', 'application/ld+json']],
     input: ScoutInput::class,
     output: ScoutOutput::class,

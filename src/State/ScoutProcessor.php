@@ -8,7 +8,11 @@ use App\DTO\ScoutOutput;
 use App\Entity\Scout;
 use App\Service\AllRepositories;
 use App\Service\Gestion;
+use App\Service\GestionMedia;
+use App\Service\GestionQrCode;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ScoutProcessor implements ProcessorInterface
@@ -17,12 +21,18 @@ class ScoutProcessor implements ProcessorInterface
         private EntityManagerInterface $entityManager,
         private AllRepositories $allRepositories,
         private Gestion $_gestion,
+        private GestionQrCode $qrCode,
+        private RequestStack $requestStack,
+        private GestionMedia $gestionMedia
     )
     {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $baseUrl = $request->getSchemeAndHttpHost();
+
         // Suppression du scout
         if ($operation->getMethod() === 'DELETE' && isset($uriVariables['id'])) {
             $scout = $this->allRepositories->getOneScout($uriVariables['id']);
@@ -50,8 +60,10 @@ class ScoutProcessor implements ProcessorInterface
             throw new \InvalidArgumentException("Le format de la date de naissance est invalide.");
         }
 
+        $code = $this->_gestion->generateCode($data->statut); // Generation du code
+
         $scout->setGroupe($groupe);
-        $scout->setCode($this->_gestion->generateCode($data->statut));
+        $scout->setCode($code);
         $scout->setMatricule($this->_gestion->validForm($data->matricule));
         $scout->setNom(strtoupper($this->_gestion->validForm($data->nom)));
         $scout->setPrenom(strtoupper($this->_gestion->validForm($data->prenom)));
@@ -63,11 +75,21 @@ class ScoutProcessor implements ProcessorInterface
         $scout->setFonction($this->_gestion->validForm($data->fonction));
         $scout->setBranche($this->_gestion->validForm($data->branche));
         $scout->setStatut($this->_gestion->validForm($data->statut));
-        $scout->setTelephoneParent($this->_gestion->validForm($data->telephoneParent));
+        $scout->setTelephoneParent((bool)$data->telephoneParent);
+        $scout->setQrcode($this->qrCode->qrCodeGenerator($code));
+
+        if (is_string($data->photo) && $data->photo !== '') {
+            if ($scout->getPhoto()) {
+                $this->gestionMedia->removeUpload($scout->getPhoto(), 'profile');
+            }
+
+            $scout->setPhoto($data->photo);
+        }
+
 
         $this->entityManager->persist($scout);
         $this->entityManager->flush();
 
-        return ScoutOutput::mapToOut($scout);
+        return ScoutOutput::mapToOut($scout, $baseUrl);
     }
 }

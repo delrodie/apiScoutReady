@@ -40,7 +40,7 @@ class ScoutOutput
         $dto->lieuNaissance = $scout->getLieuNaissance();
         $dto->telephone = $scout->getTelephone();
         $dto->email = $scout->getEmail();
-        $dto->photo = $scout->getPhoto();
+        $dto->photo = $baseUrl.'/scouts/profile/'.$scout->getPhoto();
         $dto->fonction = $scout->getFonction();
         $dto->branche = $scout->getBranche();
         $dto->statut = $scout->getStatut();
