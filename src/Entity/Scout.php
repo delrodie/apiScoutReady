@@ -3,6 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\DTO\ScoutInput;
 use App\DTO\ScoutOutput;
 use App\Repository\ScoutRepository;
@@ -13,6 +18,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ScoutRepository::class)]
 #[ApiResource(
+    operations: [
+        new Post(security: "is_granted('ROLE_MOBILE')"),
+        new Get(),
+        new GetCollection(),
+        new Patch(security: "is_granted('ROLE_MOBILE')"),
+        new Delete(security: "is_granted('ROLE_MOBILE')")
+    ],
     inputFormats: ['multipart' => ['multipart/form-data']],
     outputFormats: ['json' => ['application/json', 'application/ld+json']],
     input: ScoutInput::class,

@@ -5,6 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\DTO\GroupeInput;
 use App\DTO\GroupeOutput;
 use App\Repository\GroupeRepository;
@@ -14,6 +19,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupeRepository::class)]
 #[ApiResource(
+    operations: [
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Get(),
+        new GetCollection(),
+        new Patch(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
+    ],
     inputFormats: ['json' => ['application/json', 'application/ld+json']],
     outputFormats: ['json' => ['application/json', 'application/ld+json']],
     input: GroupeInput::class,

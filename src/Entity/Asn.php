@@ -3,6 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\DTO\AsnInput;
 use App\DTO\AsnOutput;
 use App\Repository\AsnRepository;
@@ -12,6 +18,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AsnRepository::class)]
 #[ApiResource(
+    operations: [
+        new Post(security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Get(),
+        new GetCollection(),
+        new Patch(security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_SUPER_ADMIN')")
+    ],
     inputFormats: ['json' => ['application/json', 'application/ld+json']],
     outputFormats: ['json' => ['application/json', 'application/ld+json']],
     input: AsnInput::class,
