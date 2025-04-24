@@ -19,6 +19,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            pattern: ^/(?!api/) # Ne correspond pas aux routes commençant par /api/
             lazy: true
             provider: users_in_memory
 
@@ -40,6 +41,8 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+#         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+         - { path: ^/api$, roles: PUBLIC_ACCESS }
          - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

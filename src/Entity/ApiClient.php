@@ -14,10 +14,10 @@ class ApiClient implements UserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $apiKey = null;
 
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
@@ -59,7 +59,7 @@ class ApiClient implements UserInterface
 
     public function getRoles(): array
     {
-        return $this->roles;
+        return $this->roles ?? ['ROLE_API'];
     }
 
     public function setRoles(?array $roles): static

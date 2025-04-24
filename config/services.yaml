@@ -6,6 +6,8 @@
 parameters:
 
 services:
+    Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface:
+        alias: Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -28,6 +30,14 @@ services:
         arguments:
             $scoutsDirectory: '%kernel.project_dir%/public/scouts'
             $profileDirectory: '%kernel.project_dir%/public/scouts/profile'
+
+    App\EventListener\DisableSessionForApiListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: 128 }
+
+    App\Security\ApiKeyAuthenticator:
+        arguments:
+            $apiClientRepository: '@App\Repository\ApiClientRepository'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
