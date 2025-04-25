@@ -2,11 +2,36 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\DTO\ApiClientInput;
+use App\DTO\ApiClientOutput;
 use App\Repository\ApiClientRepository;
+use App\State\ApiClientProcessor;
+use App\State\ApiClientProvider;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ApiClientRepository::class)]
+#[ApiResource(
+    operations: [
+        new Post(security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Get(),
+        new GetCollection(security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Patch(security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_SUPER_ADMIN')")
+    ],
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: ApiClientInput::class,
+    output: ApiClientOutput::class,
+    provider: ApiClientProvider::class,
+    processor: ApiClientProcessor::class
+)]
 class ApiClient implements UserInterface
 {
     #[ORM\Id]

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Asn;
+use App\Repository\ApiClientRepository;
 use App\Repository\AsnRepository;
 use App\Repository\DistrictRepository;
 use App\Repository\GroupeRepository;
@@ -25,7 +26,8 @@ class AllRepositories
         private RegionRepository $regionRepository,
         private DistrictRepository $districtRepository,
         private GroupeRepository $groupeRepository,
-        private ScoutRepository $scoutRepository
+        private ScoutRepository $scoutRepository,
+        private ApiClientRepository $apiClientRepository
     )
     {
     }
@@ -112,5 +114,19 @@ class AllRepositories
             self::TELEPHONE => $this->scoutRepository->findAllByTelephone($variable),
             default => $this->scoutRepository->findAllScout(),
         };
+    }
+
+    public function getOneClient($variable, ?String $type)
+    {
+        return match ($type){
+            'ID' => $this->apiClientRepository->findOneBy(['id' => $variable]),
+            'NAME' => $this->apiClientRepository->findOneBy(['name' => $variable]),
+            'KEY' => $this->apiClientRepository->findOneBy(['apiKey' => $variable]),
+        };
+    }
+
+    public function getAllClients()
+    {
+        return $this->apiClientRepository->findAll();
     }
 }
