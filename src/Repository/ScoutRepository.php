@@ -41,32 +41,61 @@ class ScoutRepository extends ServiceEntityRepository
         return $query->getQuery()->getOneOrNullResult();
     }
 
-    public function findAllScoutOrByQuery(?int $groupe = null, ?int $district = null, ?int $region = null, ?int $asn = null)
+    public function findAllScout()
     {
-        $query = $this->query();
-        if ($groupe){
-            $query->where('g.id = :groupe')
-                ->setParameter('groupe', $groupe);
-        }
-
-        if ($district){
-            $query->where('d.id = :district')
-                ->setParameter('district', $district);
-        }
-
-        if ($region){
-            $query->where('r.id = :region')
-                ->setParameter('region', $region);
-        }
-
-        if ($asn){
-            $query->where('a.id = :asn')
-                ->setParameter('asn', $asn);
-        }
-
-        return $query->orderBy('s.nom', "ASC")
+        return $this->query()
+            ->orderBy('s.nom', "ASC")
                     ->addOrderBy('s.prenom', "ASC")
                     ->getQuery()->getResult();
+    }
+
+    public function findAllByGroup(?int $group)
+    {
+        return $this->query()
+            ->where('g.id = :group')
+            ->setParameter('group', $group)
+            ->orderBy('s.nom', 'ASC')
+            ->addOrderBy('s.prenom', 'ASC')
+            ->getQuery()->getResult();
+    }
+
+    public function findAllByDistrict(?int $district)
+    {
+        return $this->query()
+            ->where('d.id = :district')
+            ->setParameter('district', $district)
+            ->orderBy('s.nom', 'ASC')
+            ->addOrderBy('s.prenom', 'ASC')
+            ->getQuery()->getResult();
+    }
+
+    public function findAllByRegion(?int $region)
+    {
+        return $this->query()
+            ->where('r.id = :region')
+            ->setParameter('region', $region)
+            ->orderBy('s.nom', 'ASC')
+            ->addOrderBy('s.prenom', 'ASC')
+            ->getQuery()->getResult();
+    }
+
+    public function findAllByAsn(?int $asn)
+    {
+        return $this->query()
+            ->where('a.id = :asn')
+            ->setParameter('asn', $asn)
+            ->orderBy('s.nom', 'ASC')
+            ->addOrderBy('s.prenom', 'ASC')
+            ->getQuery()->getResult();
+    }
+
+    public function findAllByTelephone(?string $telephone)
+    {
+        return $this->query()
+            ->where('s.telephone = :telephone')
+            ->setParameter('telephone', $telephone)
+            ->orderBy('s.dateNaissance', 'ASC')
+            ->getQuery()->getResult();
     }
 
     public function query()

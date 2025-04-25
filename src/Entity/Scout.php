@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -32,6 +34,16 @@ use Doctrine\ORM\Mapping as ORM;
     provider: ScoutProvider::class,
     processor: ScoutProcessor::class
 )]
+#[ApiFilter(
+    SearchFilter::class, properties: [
+    'code' => 'partial',
+    'matricule' => 'partial',
+    'telephone' => 'partial',
+    'groupe' => 'exact',
+    'groupe.district' => 'exact',
+    'groupe.district.region' => 'exact',
+    'groupe.district.region.asn' => 'exact'
+])]
 class Scout
 {
     #[ORM\Id]
@@ -39,10 +51,10 @@ class Scout
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $matricule = null;
 
     #[ORM\Column(length: 255, nullable: true)]

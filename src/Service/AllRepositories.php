@@ -11,6 +11,15 @@ use App\Repository\ScoutRepository;
 
 class AllRepositories
 {
+    public const GROUPE = 'GROUPE';
+    public const DISTRICT = 'DISTRICT';
+    public const REGION = 'REGION';
+    public const ASN = 'ASN';
+    public const TELEPHONE = 'TELEPHONE';
+    public const MATRICULE = 'MATRICULE';
+    public const CODE = 'CODE';
+
+
     public function __construct(
         private AsnRepository $asnRepository,
         private RegionRepository $regionRepository,
@@ -92,14 +101,16 @@ class AllRepositories
         };
     }
 
-    public function getAllScoutOrByQuery(?int $groupe = null, ?int $district = null, ?int $region = null, ?int $asn = null)
+
+    public function getAllScoutOrByQuery($variable = null, ?string $type = 'ALL')
     {
-        return match (true){
-            !is_null($groupe) => $this->scoutRepository->findAllScoutOrByQuery($groupe),
-            !is_null($district) => $this->scoutRepository->findAllScoutOrByQuery(null, $district),
-            !is_null($region) => $this->scoutRepository->findAllScoutOrByQuery(null, null, $region),
-            !is_null($asn) => $this->scoutRepository->findAllScoutOrByQuery(null, null, null, $asn),
-            default => $this->scoutRepository->findAllScoutOrByQuery(),
+        return match ($type){
+            self::GROUPE => $this->scoutRepository->findAllByGroup($variable),
+            self::DISTRICT => $this->scoutRepository->findAllByDistrict($variable),
+            self::REGION => $this->scoutRepository->findAllByRegion($variable),
+            self::ASN => $this->scoutRepository->findAllByAsn($variable),
+            self::TELEPHONE => $this->scoutRepository->findAllByTelephone($variable),
+            default => $this->scoutRepository->findAllScout(),
         };
     }
 }
