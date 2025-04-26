@@ -41,7 +41,7 @@ class Groupe
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $paroisse = null;
 
     #[ORM\ManyToOne]

@@ -9,6 +9,8 @@ use App\Repository\DistrictRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\RegionRepository;
 use App\Repository\ScoutRepository;
+use App\Repository\UtilisationRepository;
+use App\Service\Gestion;
 
 class AllRepositories
 {
@@ -22,12 +24,13 @@ class AllRepositories
 
 
     public function __construct(
-        private AsnRepository $asnRepository,
-        private RegionRepository $regionRepository,
-        private DistrictRepository $districtRepository,
-        private GroupeRepository $groupeRepository,
-        private ScoutRepository $scoutRepository,
-        private ApiClientRepository $apiClientRepository
+        private AsnRepository         $asnRepository,
+        private RegionRepository      $regionRepository,
+        private DistrictRepository    $districtRepository,
+        private GroupeRepository      $groupeRepository,
+        private ScoutRepository       $scoutRepository,
+        private ApiClientRepository   $apiClientRepository,
+        private UtilisationRepository $utilisationRepository,
     )
     {
     }
@@ -65,9 +68,12 @@ class AllRepositories
         return $this->regionRepository->findAll();
     }
 
-    public function getOneDistrict(?int $id)
+    public function getOneDistrict($value, $type)
     {
-        return $this->districtRepository->findOneBy(['id' => $id]);
+        return match ($type){
+            'ID' => $this->districtRepository->findOneBy(['id' => $value]),
+            'NOM' => $this->districtRepository->findOneBy(['nom' => $value]),
+        };
     }
 
     public function getDistrictsByRegionId(?int $id)
@@ -80,9 +86,12 @@ class AllRepositories
         return $this->districtRepository->findAll();
     }
 
-    public function getOneGroupe(?int $id)
+    public function getOneGroupe($value, $type = 'ID')
     {
-        return $this->groupeRepository->findOneBy(['id' => $id]);
+        return match ($type){
+            'ID' => $this->groupeRepository->findOneBy(['id' => $value]),
+            'PAROISSE' => $this->groupeRepository->findOneBy(['paroisse' => $value])
+        };
     }
 
     public function getAllGroupeOrByQuery(?int $district = null, ?int $region = null)
@@ -101,6 +110,14 @@ class AllRepositories
             !is_null($code) => $this->scoutRepository->findOneScout(null, $code),
             !is_null($matricule) => $this->scoutRepository->findOneScout(null, null, $matricule),
         };
+    }
+
+    public function getOneScoutByTelephone(?string $telephone)
+    {
+        return $this->scoutRepository->findOneBy([
+            'telephone' => $telephone,
+            'telephoneParent' => false,
+        ], ['id' => 'DESC']);
     }
 
 
@@ -128,5 +145,19 @@ class AllRepositories
     public function getAllClients()
     {
         return $this->apiClientRepository->findAll();
+    }
+
+    public function getOneUtilisation(?int $scout)
+    {
+        return $this->utilisationRepository->findOneBy([
+            'scout' => $scout,
+            'annee' => Gestion::annee(),
+            'statut' => Gestion::UTILISATEUR_STATUT_APPROUVE
+        ]);
+    }
+
+    public function getUtilisateurByScout(?int $scout)
+    {
+        return $this->utilisationRepository->findOneBy(['scout' => $scout], ['id' => 'DESC']);
     }
 }

@@ -21,10 +21,18 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ScoutRepository::class)]
 #[ApiResource(
     operations: [
-        new Post(security: "is_granted('ROLE_MOBILE')"),
+        new Post(security: "is_granted('ROLE_MOBILE')", validationContext: ['groups' => ['post']],),
         new Get(),
         new GetCollection(),
-        new Patch(security: "is_granted('ROLE_MOBILE')"),
+        new Patch(
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            outputFormats: ['json' => ['application/json', 'application/ld+json']],
+            validationContext: ['groups' => ['patch']],
+            input: ScoutInput::class,
+            output: ScoutOutput::class,
+            provider: ScoutProvider::class,
+            processor: ScoutProcessor::class
+        ),
         new Delete(security: "is_granted('ROLE_MOBILE')")
     ],
     inputFormats: ['multipart' => ['multipart/form-data']],

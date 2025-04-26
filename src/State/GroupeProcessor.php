@@ -25,7 +25,7 @@ class GroupeProcessor implements ProcessorInterface
     {
         // Suppression du groupe
         if ($operation->getMethod() === 'DELETE' && $uriVariables['id'] !== null) {
-            $groupe = $this->allRepositories->getOneGroupe($uriVariables['id']);
+            $groupe = $this->allRepositories->getOneGroupe($uriVariables['id'], 'ID');
             if(!$groupe) throw  new NotFoundHttpException("Impossible de supprimer ce groupe concerné par l'ID: {$uriVariables['id']} car il n'a pas été trouvé");
             $this->entityManager->remove($groupe);
             $this->entityManager->flush();
@@ -41,8 +41,13 @@ class GroupeProcessor implements ProcessorInterface
             $groupe = new Groupe();
         }
 
-        $district = $this->allRepositories->getOneDistrict($data->district);
+        $district = $this->allRepositories->getOneDistrict($data->district, 'ID');
         if (!$district) throw new NotFoundHttpException("Echec! Le district associé n'a pas été trouvé");
+
+        $verifExist = $this->allRepositories->getOneGroupe($data->paroisse, 'PAROISSE');
+        if ($verifExist){
+            throw new \Exception("Echec! Le groupe '{$data->paroisse}' existe déjà dans le système.");
+        }
 
         $groupe->setParoisse($this->gestion->validForm($data->paroisse));
         $groupe->setDistrict($district);

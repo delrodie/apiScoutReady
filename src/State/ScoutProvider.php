@@ -41,6 +41,7 @@ class ScoutProvider implements ProviderInterface
             $districtId = $request?->query->get('district');
             $regionId = $request?->query->get('region');
             $asnId = $request?->query->get('asn');
+            $page = $request?->query->get('page');
 
             if ($code){
                 $scout = $this->allRepositories->getOneScout(null, $code);
@@ -60,6 +61,7 @@ class ScoutProvider implements ProviderInterface
                 !is_null($regionId) => $this->allRepositories->getAllScoutOrByQuery($regionId, AllRepositories::REGION),
                 !is_null($asnId) => $this->allRepositories->getAllScoutOrByQuery($asnId, AllRepositories::ASN),
                 !is_null($telephone) => $this->allRepositories->getAllScoutOrByQuery($telephone, AllRepositories::TELEPHONE),
+                !is_null($page) => $this->allRepositories->getAllScoutOrByQuery(),
                 default => throw new \Exception("Vos paramètres de requêtes n'ont pas été définis. Veuillez contacter les administrateurs!"),
             };
 

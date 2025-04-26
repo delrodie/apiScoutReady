@@ -25,7 +25,7 @@ class DistrictProcessor implements ProcessorInterface
     {
         // Suppression du district
         if ($operation->getMethod() === 'DELETE' && !empty($uriVariables['id'])) {
-            $district = $this->allRepositories->getOneDistrict($uriVariables['id']);
+            $district = $this->allRepositories->getOneDistrict($uriVariables['id'], 'ID');
             if (!$district) throw new NotFoundHttpException("Impossimble de surpprimer le district avec l'ID {$uriVariables['id']}.");
 
             $this->entityManager->remove($district);
@@ -36,7 +36,7 @@ class DistrictProcessor implements ProcessorInterface
 
         // Modification et sauvegarde
         if (isset($uriVariables['id'])) {
-            $district = $this->allRepositories->getOneDistrict($uriVariables['id']);
+            $district = $this->allRepositories->getOneDistrict($uriVariables['id'], 'ID');
             if (!$district) throw new NotFoundHttpException("Impossible de modifier le district concerné par l'ID {$uriVariables['id']}, car il n'a pas été trouvé.é");
         }else{
             $district = new District();
@@ -44,6 +44,11 @@ class DistrictProcessor implements ProcessorInterface
 
         $region = $this->allRepositories->getOneRegion($data->region);
         if (!$region) throw new NotFoundHttpException("Region introuvable avec l'ID {$data->region} !");
+
+        $verifExist = $this->allRepositories->getOneDistrict($data->nom, 'NOM');
+        if ($verifExist){
+            throw new \Exception("Echec! Le district '{$data->nom}' existe déjà dans le système");
+        }
 
         $district->setNom($this->gestion->validForm($data->nom));
         $district->setRegion($region);

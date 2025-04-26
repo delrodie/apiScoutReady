@@ -23,7 +23,7 @@ class ScoutOutput
     public ?string $fonction = null;
     public ?string $branche = null;
     public ?string $statut = null;
-    public ?bool $telephoneParent = null;
+    public ?string $telephoneParent = null;
     public ?string $qrCode = null;
     public ?object $groupe = null;
 

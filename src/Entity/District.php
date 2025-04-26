@@ -16,6 +16,7 @@ use App\Repository\DistrictRepository;
 use App\State\DistrictProcessor;
 use App\State\DistrictProvider;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: DistrictRepository::class)]
 #[ApiResource(
@@ -34,6 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
     processor: DistrictProcessor::class,
 )]
 #[ApiFilter(SearchFilter::class, properties: ['region.id' => 'exact'])]
+#[UniqueEntity(fields: ['nom'], message: "Echec! Ce nom de district est existe déjà")]
 class District
 {
     #[ORM\Id]
@@ -41,7 +43,7 @@ class District
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $nom = null;
 
     #[ORM\ManyToOne]

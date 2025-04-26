@@ -2,10 +2,14 @@
 
 namespace App\Service;
 
+use App\Entity\Utilisation;
 use App\Repository\ScoutRepository;
 
 class Gestion
 {
+    const UTILISATEUR_STATUT_ATTENTE = 0;
+    const UTILISATEUR_STATUT_APPROUVE = 1;
+    const UTILISATEUR_STATUT_REJETE = 2;
     public function __construct(
         private AllRepositories $allRepositories,
     )
@@ -22,6 +26,32 @@ class Gestion
         }while($this->allRepositories->getOneScout(null, $code));
 
         return $code;
+    }
+
+    public function saveUtilisation(?object $scout, ?array $param): Utilisation|false
+    {
+        $verif = $this->allRepositories->getOneUtilisation($scout->getId());
+        if ($verif) return false;
+
+        $utilisation = new Utilisation();
+        $utilisation->setAnnee($this->annee());
+        $utilisation->setScout($scout);
+        $utilisation->setGroupe($param['groupe']);
+        $utilisation->setStatut(self::UTILISATEUR_STATUT_ATTENTE);
+        $utilisation->setDemandeur($param['demandeur']);
+
+        return $utilisation;
+    }
+
+    public static function annee(): string
+    {
+        $anneeEncours = (int) Date('Y');
+        $moisEncours = (int) Date('m');
+
+        $debutAnnee = $moisEncours > 9 ? $anneeEncours : $anneeEncours - 1;
+        $finAnnee = $moisEncours > 9 ? $anneeEncours + 1 : $anneeEncours;
+
+        return sprintf('%d-%d', $debutAnnee, $finAnnee);
     }
 
     /**

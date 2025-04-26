@@ -42,7 +42,7 @@ class Region
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $symbolique = null;
 
     #[ORM\ManyToOne]

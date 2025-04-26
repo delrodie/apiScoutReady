@@ -3,6 +3,7 @@ api_platform:
     version: 1.0.0
     defaults:
         stateless: true
+        validation_groups: ['Default']
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
 

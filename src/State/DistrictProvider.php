@@ -22,7 +22,7 @@ class DistrictProvider implements ProviderInterface
     {
         // Filtre par ID du district
         if (!empty($uriVariables['id'])){
-            $district = $this->allRepositories->getOneDistrict($uriVariables['id']);
+            $district = $this->allRepositories->getOneDistrict($uriVariables['id'], 'ID');
             if (!$district) throw new NotFoundHttpException("Aucun district trouvé avec l'ID {$uriVariables['id']}.");
 
             return DistrictOutput::mapToOut($district);
