@@ -10,6 +10,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Controller\ApiScoutPatchController;
 use App\DTO\ScoutInput;
 use App\DTO\ScoutOutput;
 use App\Repository\ScoutRepository;
@@ -24,14 +26,11 @@ use Doctrine\ORM\Mapping as ORM;
         new Post(security: "is_granted('ROLE_MOBILE')", validationContext: ['groups' => ['post']],),
         new Get(),
         new GetCollection(),
-        new Patch(
-            inputFormats: ['multipart' => ['multipart/form-data']],
-            outputFormats: ['json' => ['application/json', 'application/ld+json']],
-            validationContext: ['groups' => ['patch']],
-            input: ScoutInput::class,
-            output: ScoutOutput::class,
-            provider: ScoutProvider::class,
-            processor: ScoutProcessor::class
+        new Post(
+            uriTemplate: '/scouts/{id}/update',
+            controller: ApiScoutPatchController::class,
+            description: "Mise a jour partiellement du scout",
+            deserialize: false
         ),
         new Delete(security: "is_granted('ROLE_MOBILE')")
     ],
