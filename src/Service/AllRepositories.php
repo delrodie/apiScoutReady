@@ -14,14 +14,6 @@ use App\Service\Gestion;
 
 class AllRepositories
 {
-    public const GROUPE = 'GROUPE';
-    public const DISTRICT = 'DISTRICT';
-    public const REGION = 'REGION';
-    public const ASN = 'ASN';
-    public const TELEPHONE = 'TELEPHONE';
-    public const MATRICULE = 'MATRICULE';
-    public const CODE = 'CODE';
-
 
     public function __construct(
         private AsnRepository         $asnRepository,
@@ -124,11 +116,11 @@ class AllRepositories
     public function getAllScoutOrByQuery($variable = null, ?string $type = 'ALL')
     {
         return match ($type){
-            self::GROUPE => $this->scoutRepository->findAllByGroup($variable),
-            self::DISTRICT => $this->scoutRepository->findAllByDistrict($variable),
-            self::REGION => $this->scoutRepository->findAllByRegion($variable),
-            self::ASN => $this->scoutRepository->findAllByAsn($variable),
-            self::TELEPHONE => $this->scoutRepository->findAllByTelephone($variable),
+            Variables::GROUPE => $this->scoutRepository->findAllByGroup($variable),
+            Variables::DISTRICT => $this->scoutRepository->findAllByDistrict($variable),
+            Variables::REGION => $this->scoutRepository->findAllByRegion($variable),
+            Variables::ASN => $this->scoutRepository->findAllByAsn($variable),
+            Variables::TELEPHONE => $this->scoutRepository->findAllByTelephone($variable),
             default => $this->scoutRepository->findAllScout(),
         };
     }
@@ -152,12 +144,51 @@ class AllRepositories
         return $this->utilisationRepository->findOneBy([
             'scout' => $scout,
             'annee' => Gestion::annee(),
-            'statut' => Gestion::UTILISATEUR_STATUT_APPROUVE
+            'statut' => Variables::UTILISATEUR_STATUT_APPROUVE
         ]);
     }
+
+
 
     public function getUtilisateurByScout(?int $scout)
     {
         return $this->utilisationRepository->findOneBy(['scout' => $scout], ['id' => 'DESC']);
+    }
+
+    public function getUtilisateurByQuery($value, ?string $query)
+    {
+        return match ($query){
+            Variables::MATRICULE => $this->utilisationRepository->findByMatricule($value, Gestion::annee()),
+            Variables::CODE => $this->utilisationRepository->findByCode($value, Gestion::annee()),
+            Variables::TELEPHONE => $this->utilisationRepository->findByTelephone($value, Gestion::annee()),
+            Variables::GROUPE => $this->utilisationRepository->findByGroupe($value, Gestion::annee()),
+            Variables::DISTRICT => $this->utilisationRepository->findByDistrict($value, Gestion::annee()),
+            Variables::REGION => $this->utilisationRepository->findByregion($value, Gestion::annee()),
+            Variables::ASN => $this->utilisationRepository->findByAsn($value, Gestion::annee()),
+            Variables::PAGE => $this->utilisationRepository->findByPage(Gestion::annee())
+        };
+    }
+
+    public function getUtilisateurByIdAndStatut(int $id, int $statut)
+    {
+        return $this->utilisationRepository->findOneBy([
+            'id' => $id,
+            'statut' => $statut,
+            'annee' => Gestion::annee()
+        ]);
+    }
+
+    public function getUtilisateurDifferentFromStatut(int $id, int $statut)
+    {
+        return $this->utilisationRepository->findDifferentFromStatus($id, $statut, Gestion::annee());
+    }
+
+    public function getUtilisateurByScoutAndStatut(int $scout)
+    {
+        return $this->utilisationRepository->findByScoutFromStatus(
+            $scout, Gestion::annee(),
+            Variables::UTILISATEUR_STATUT_APPROUVE,
+            Variables::UTILISATEUR_STATUT_ATTENTE
+        );
     }
 }

@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\DTO\ScoutOutput;
 use App\Service\AllRepositories;
+use App\Service\Variables;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -56,11 +57,11 @@ class ScoutProvider implements ProviderInterface
             }
 
             $scouts = match (true){
-                !is_null($groupeId) => $this->allRepositories->getAllScoutOrByQuery($groupeId, AllRepositories::GROUPE),
-                !is_null($districtId) => $this->allRepositories->getAllScoutOrByQuery($districtId, AllRepositories::DISTRICT),
-                !is_null($regionId) => $this->allRepositories->getAllScoutOrByQuery($regionId, AllRepositories::REGION),
-                !is_null($asnId) => $this->allRepositories->getAllScoutOrByQuery($asnId, AllRepositories::ASN),
-                !is_null($telephone) => $this->allRepositories->getAllScoutOrByQuery($telephone, AllRepositories::TELEPHONE),
+                !is_null($groupeId) => $this->allRepositories->getAllScoutOrByQuery($groupeId, Variables::GROUPE),
+                !is_null($districtId) => $this->allRepositories->getAllScoutOrByQuery($districtId, Variables::DISTRICT),
+                !is_null($regionId) => $this->allRepositories->getAllScoutOrByQuery($regionId, Variables::REGION),
+                !is_null($asnId) => $this->allRepositories->getAllScoutOrByQuery($asnId, Variables::ASN),
+                !is_null($telephone) => $this->allRepositories->getAllScoutOrByQuery($telephone, Variables::TELEPHONE),
                 !is_null($page) => $this->allRepositories->getAllScoutOrByQuery(),
                 default => throw new \Exception("Vos paramètres de requêtes n'ont pas été définis. Veuillez contacter les administrateurs!"),
             };

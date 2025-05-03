@@ -2,14 +2,37 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use App\DTO\UtilisationInput;
+use App\DTO\UtilisationOutput;
 use App\Repository\UtilisationRepository;
+use App\State\UtilisationProcessor;
+use App\State\UtilisationProvider;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UtilisationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource()]
+#[ApiResource(
+    inputFormats: ['json' => ['application/json', 'application/ld+json']],
+    outputFormats: ['json' => ['application/json', 'application/ld+json']],
+    input: UtilisationInput::class,
+    output: UtilisationOutput::class,
+    provider: UtilisationProvider::class,
+    processor: UtilisationProcessor::class
+)]
+#[ApiFilter(
+    SearchFilter::class, properties: [
+        'scout.code' => 'partial',
+        'scout.matricule' => 'partial',
+        'scout.telephone' => 'partial',
+        'groupe' => 'exact',
+        'groupe.district' => 'exact',
+        'groupe.district.region' => 'exact',
+        'groupe.district.region.asn' => 'exact'
+])]
 class Utilisation
 {
     #[ORM\Id]

@@ -7,9 +7,7 @@ use App\Repository\ScoutRepository;
 
 class Gestion
 {
-    const UTILISATEUR_STATUT_ATTENTE = 0;
-    const UTILISATEUR_STATUT_APPROUVE = 1;
-    const UTILISATEUR_STATUT_REJETE = 2;
+
     public function __construct(
         private AllRepositories $allRepositories,
     )
@@ -37,7 +35,7 @@ class Gestion
         $utilisation->setAnnee($this->annee());
         $utilisation->setScout($scout);
         $utilisation->setGroupe($param['groupe']);
-        $utilisation->setStatut(self::UTILISATEUR_STATUT_ATTENTE);
+        $utilisation->setStatut(Variables::UTILISATEUR_STATUT_ATTENTE);
         $utilisation->setDemandeur($param['demandeur']);
 
         return $utilisation;
