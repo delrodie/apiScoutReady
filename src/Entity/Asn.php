@@ -19,11 +19,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AsnRepository::class)]
 #[ApiResource(
     operations: [
-        new Post(security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
         new Get(),
         new GetCollection(),
-        new Patch(security: "is_granted('ROLE_SUPER_ADMIN')"),
-        new Delete(security: "is_granted('ROLE_SUPER_ADMIN')")
+        new Patch(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
     ],
     inputFormats: ['json' => ['application/json', 'application/ld+json']],
     outputFormats: ['json' => ['application/json', 'application/ld+json']],
