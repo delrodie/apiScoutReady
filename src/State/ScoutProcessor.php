@@ -35,6 +35,7 @@ class ScoutProcessor implements ProcessorInterface
     {
         $request = $this->requestStack->getCurrentRequest();
         $baseUrl = $request->getSchemeAndHttpHost();
+        $this->logService->log("Tentative d'enregistrement de scout {$data}");
 
         if ($operation->getMethod() === 'DELETE' && isset($uriVariables['id'])) {
             return $this->deleteScout($uriVariables['id']);
