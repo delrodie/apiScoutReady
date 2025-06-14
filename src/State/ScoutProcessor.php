@@ -10,6 +10,7 @@ use App\Service\AllRepositories;
 use App\Service\Gestion;
 use App\Service\GestionMedia;
 use App\Service\GestionQrCode;
+use App\Service\LogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -24,7 +25,8 @@ class ScoutProcessor implements ProcessorInterface
         private Gestion $_gestion,
         private GestionQrCode $qrCode,
         private RequestStack $requestStack,
-        private GestionMedia $gestionMedia
+        private GestionMedia $gestionMedia,
+        private LogService $logService,
     )
     {
     }
@@ -46,7 +48,10 @@ class ScoutProcessor implements ProcessorInterface
     private function deleteScout(int|string $id): ?ScoutOutput
     {
         $scout = $this->allRepositories->getOneScout($id);
-        if (!$scout) throw  new NotFoundHttpException("Impossible de supprimer le scout. L'ID {$id} n'a pas été trouvé");
+        if (!$scout) {
+            $this->logService->log("Impossible de supprimer le scout. L'ID {$id} n'a pas été trouvé");
+            throw  new NotFoundHttpException("Impossible de supprimer le scout. L'ID {$id} n'a pas été trouvé");
+        }
 
         $utilisation = $this->allRepositories->getUtilisateurByScout($scout->getId());
         if ($utilisation){
@@ -54,6 +59,8 @@ class ScoutProcessor implements ProcessorInterface
         }
         $this->entityManager->remove($scout);
         $this->entityManager->flush();
+
+        $this->logService->log("L'utilisateur a supprimé un scout");
 
         return null;
     }
@@ -74,7 +81,10 @@ class ScoutProcessor implements ProcessorInterface
         }
 
         $groupe = $this->allRepositories->getOneGroupe((int) $data->groupe);
-        if (!$groupe) throw new NotFoundHttpException("Le groupe associé n'a pas été trouvé!");
+        if (!$groupe) {
+            $this->logService->log("Le groupe {$data->groupe} n'a pas été trouvé!");
+            throw new NotFoundHttpException("Le groupe associé n'a pas été trouvé!");
+        }
 
         $scout = $this->mapDataToScout($scout, $data, $groupe);
 
@@ -91,6 +101,8 @@ class ScoutProcessor implements ProcessorInterface
         $this->entityManager->persist($scout);
         $this->entityManager->persist($utilisation);
         $this->entityManager->flush();
+
+        $this->logService->log("Le scout '{$scout->getCode()} a été enregistré avec succès");
 
         return $scout;
     }
@@ -127,6 +139,7 @@ class ScoutProcessor implements ProcessorInterface
         try {
             return new \DateTime($date);
         } catch(\Exception $e) {
+            $this->logService->log("Le format de la date de naissance est invalide: {$e}");
             throw new BadRequestHttpException("Le format de la date de naissance est invalide: {$e}");
         }
     }
@@ -135,6 +148,7 @@ class ScoutProcessor implements ProcessorInterface
     {
         if (!$telephone) return;
         if($this->allRepositories->getOneScoutByTelephone($telephone)){
+            $this->logService->log("Echèc! le numéro de telephone '{$telephone}' appartient déjà à un autre scout");
             throw new BadRequestHttpException("Echèc! le numéro de telephone '{$telephone}' appartient déjà à un autre scout");
         }
     }

@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\DTO\ScoutOutput;
 use App\Service\AllRepositories;
+use App\Service\LogService;
 use App\Service\Variables;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,7 +18,8 @@ class ScoutProvider implements ProviderInterface
         private AllRepositories $allRepositories,
         private RequestStack $requestStack,
         private ScoutOutput $scoutOutput,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private LogService $logService
     )
     {
     }
@@ -27,8 +29,12 @@ class ScoutProvider implements ProviderInterface
         $baseUrl = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost();
         if (isset($uriVariables['id'])){
             $scout = $this->allRepositories->getOneScout($uriVariables['id']);
-            if (!$scout) throw new NotFoundHttpException("Aucun scout n'a été trouvé avec l'ID {$uriVariables['id']}");
+            if (!$scout) {
+                $this->logService->log("Aucun scout n'a été trouvé avec l'ID {$uriVariables['id']}");
+                throw new NotFoundHttpException("Aucun scout n'a été trouvé avec l'ID {$uriVariables['id']}");
+            }
 
+            $this->logService->log("L'utilisateur a consulté le scout {$scout->getCode()}");
             return ScoutOutput::mapToOut($scout, $baseUrl);
         }
 
@@ -46,13 +52,23 @@ class ScoutProvider implements ProviderInterface
 
             if ($code){
                 $scout = $this->allRepositories->getOneScout(null, $code);
-                if (!$scout) throw new NotFoundHttpException("Oups!! Le scout ayant le code {$code} n'a pas été trouvé");
+                if (!$scout) {
+                    $this->logService->log("Oups!! Le scout ayant le code {$code} n'a pas été trouvé");
+                    throw new NotFoundHttpException("Oups!! Le scout ayant le code {$code} n'a pas été trouvé");
+                }
+
+                $this->logService->log("L'utilisateur a consulté le scout ayant le code {$code}");
                 return ScoutOutput::mapToOut($scout, $baseUrl);
             }
 
             if ($matricule){
                 $scout = $this->allRepositories->getOneScout(null, null, $matricule);
-                if (!$scout) throw new NotFoundHttpException("Oups!! Le scout ayant le matricule {$matricule} n'a pas été trouvé");
+                if (!$scout) {
+                    $this->logService->log("Oups!! Le scout ayant le matricule {$matricule} n'a pas été trouvé");
+                    throw new NotFoundHttpException("Oups!! Le scout ayant le matricule {$matricule} n'a pas été trouvé");
+                }
+
+                $this->logService->log("L'utilisateur a consulté le scout ayant le code {$matricule}");
                 return ScoutOutput::mapToOut($scout, null);
             }
 
@@ -66,11 +82,14 @@ class ScoutProvider implements ProviderInterface
                 default => throw new \Exception("Vos paramètres de requêtes n'ont pas été définis. Veuillez contacter les administrateurs!"),
             };
 
+            $this->logService->log("L'utilisateur a consulté la liste des scouts");
             return array_map(fn($scout) => ScoutOutput::mapToOut($scout, $baseUrl), $scouts);
         }
 
 
         $scouts = $this->allRepositories->getAllScoutOrByQuery();
+
+        $this->logService->log("L'utilisateur a consulté la liste des scouts");
 
         return array_map(fn($scout) => ScoutOutput::mapToOut($scout, $baseUrl), $scouts);
 
