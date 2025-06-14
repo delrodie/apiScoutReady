@@ -73,7 +73,7 @@ class ScoutProcessor implements ProcessorInterface
             $scout->setQrcode($this->qrCode->qrCodeGenerator($code));
         }
 
-        $groupe = $this->allRepositories->getOneGroupe($data->groupe);
+        $groupe = $this->allRepositories->getOneGroupe((int) $data->groupe);
         if (!$groupe) throw new NotFoundHttpException("Le groupe associé n'a pas été trouvé!");
 
         $scout = $this->mapDataToScout($scout, $data, $groupe);
