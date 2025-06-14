@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\GroupSequenceProviderInterface;
@@ -48,6 +49,11 @@ class ScoutInput implements GroupSequenceProviderInterface
         new Assert\Type(type: 'null'),
     ])]
     public ?UploadedFile $photo = null;
+
+    public function __construct(private RequestStack $requestStack)
+    {
+
+    }
     public ?string $fonction = null;
     public ?string $branche = null;
 
