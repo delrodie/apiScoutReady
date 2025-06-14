@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\DTO\DistrictOutput;
 use App\Service\AllRepositories;
+use App\Service\LogService;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -14,6 +15,7 @@ class DistrictProvider implements ProviderInterface
     public function __construct(
         private AllRepositories $allRepositories,
         private RequestStack $requestStack,
+        private LogService $logService
     )
     {
     }
@@ -25,6 +27,7 @@ class DistrictProvider implements ProviderInterface
             $district = $this->allRepositories->getOneDistrict($uriVariables['id'], 'ID');
             if (!$district) throw new NotFoundHttpException("Aucun district trouvé avec l'ID {$uriVariables['id']}.");
 
+            $this->logService->log("Affichage du district '{$district->getNom()}'");
             return DistrictOutput::mapToOut($district);
         }
 
@@ -37,6 +40,7 @@ class DistrictProvider implements ProviderInterface
             $districts = $this->allRepositories->getAllDistrict();
         }
 
+        $this->logService->log("Affichage de la liste des districts");
         return array_map([DistrictOutput::class, 'mapToOut'], $districts);
     }
 

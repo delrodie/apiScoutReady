@@ -89,7 +89,7 @@ class ScoutProvider implements ProviderInterface
 
         $scouts = $this->allRepositories->getAllScoutOrByQuery();
 
-        $this->logService->log("L'utilisateur a consulté la liste des scouts");
+        $this->logService->log("L'utilisateur a consulté la liste des scouts: {$request}");
 
         return array_map(fn($scout) => ScoutOutput::mapToOut($scout, $baseUrl), $scouts);
 
