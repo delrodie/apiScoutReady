@@ -18,7 +18,7 @@ class LogService
         $this->logger->info($message, array_merge([
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'INCONNU',
             'datetime' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
-            'type_device' => $_SERVER['HTTP_USER_AGENT'] ?? 'INCONNU',
+            'type_device' => $deviceType,
         ]));
     }
 
@@ -32,6 +32,10 @@ class LogService
 
         if (preg_match('/tablet|ipad/', $userAgent)) {
             return 'tablette';
+        }
+
+        if (preg_match('/dart|flutter/', $userAgent)) {
+            return 'aplication mobile';
         }
 
         return 'ordinateur';
