@@ -37,19 +37,19 @@ class ScoutInput implements GroupSequenceProviderInterface
     #[Assert\Email(message: "L'email n'est pas valide", groups: ['Default', 'post'])]
     public ?string $email = null;
 
-//    #[Assert\File(
-//        maxSize: '5M',
-//        mimeTypes: ['image/jpeg','image/jpg', 'image/png', 'image/webp'],
-//        mimeTypesMessage: "Merci d'uploader image JPEG ou PNG valide."
-//    )]
-    public mixed $photo = null;
+    #[Assert\File(
+        maxSize: '5M',
+        mimeTypes: ['image/jpeg','image/jpg', 'image/png', 'image/webp'],
+        mimeTypesMessage: "Merci d'uploader image JPEG ou PNG valide."
+    )]
+    public ?UploadedFile $photo = null;
     public ?string $fonction = null;
     public ?string $branche = null;
 
     #[Assert\NotBlank(message: 'Le statut ne peut être null', groups: ['Default', 'post'])]
     public ?string $statut = null;
 
-    public string|bool|null $telephoneParent = null;
+    public ?bool $telephoneParent = null;
 
     #[Assert\NotBlank(message: "Le groupe est requis", groups: ['Default', 'post'])]
     public ?int $groupe = null;
