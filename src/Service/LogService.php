@@ -6,16 +6,30 @@ use Psr\Log\LoggerInterface;
 
 class LogService
 {
-    public function __construct(private LoggerInterface $logger)
+    private LoggerInterface $apiLogger;
+    public function __construct( LoggerInterface $logger)
     {
+        $this->apiLogger = $logger->withName('monapi');
     }
 
-    public function log($message)
+    public function log($message): void
     {
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'INCONNU';
         $deviceType = $this->getDeviceType($userAgent);
 
-        $this->logger->info($message, array_merge([
+        $this->apiLogger->info($message, array_merge([
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'INCONNU',
+            'datetime' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+            'type_device' => $deviceType,
+        ]));
+    }
+
+    public function errorLog($message): void
+    {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'INCONNU';
+        $deviceType = $this->getDeviceType($userAgent);
+
+        $this->apiLogger->error($message, array_merge([
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'INCONNU',
             'datetime' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
             'type_device' => $deviceType,

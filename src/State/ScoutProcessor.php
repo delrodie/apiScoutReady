@@ -4,6 +4,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\DTO\ScoutInput;
 use App\DTO\ScoutOutput;
 use App\Entity\Scout;
 use App\Service\AllRepositories;
@@ -33,9 +34,17 @@ class ScoutProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        if (!$data instanceof ScoutInput){
+            $this->logService->errorLog("ScoutProcessor : $data n'est pas une instance de ScoutInput comme attendu. Type réçu: ".gettype($data));
+            if (is_array($data)){
+                $this->logService->errorLog("Contenu de $data (array): $data");
+            }
+            throw new BadRequestHttpException('Données de requête invalides');
+        }
         $request = $this->requestStack->getCurrentRequest();
         $baseUrl = $request->getSchemeAndHttpHost();
-        $this->logService->log("Tentative d'enregistrement de scout {$data}");
+        $this->logService->log("ScoutProcessor: Début du traitement de la requête POST.");
+        $this->logService->log("ScoutProcessor: Données du DTO ScoutInput: ", (array)$data);
 
         if ($operation->getMethod() === 'DELETE' && isset($uriVariables['id'])) {
             return $this->deleteScout($uriVariables['id']);
@@ -43,6 +52,7 @@ class ScoutProcessor implements ProcessorInterface
 
         $scout = $this->handleScoutPersistence($data, $uriVariables);
 
+        $this->logService->log("ScoutProcessor: Fin du traitement.");
         return ScoutOutput::mapToOut($scout, $baseUrl);
     }
 
@@ -110,6 +120,7 @@ class ScoutProcessor implements ProcessorInterface
     
     private function mapDataToScout(Scout $scout, mixed $data, $groupe): Scout
     {
+        $this->logService->log("ScoutProcessor: mapDataToScout - Début du mappage des données");
         $scout->setGroupe($groupe);
         $scout->setMatricule($this->_gestion->validForm($data->matricule));
         $scout->setNom(strtoupper($this->_gestion->validForm($data->nom)));
@@ -124,13 +135,29 @@ class ScoutProcessor implements ProcessorInterface
         $scout->setStatut($this->_gestion->validForm($data->statut));
         $scout->setTelephoneParent(filter_var($data->telephoneParent, FILTER_VALIDATE_BOOLEAN));
 
-        if (is_string($data->photo) && $data->photo !== '') {
+        // Gestion d l'upload du fichier
+        if ($data->photo instanceof UploadedFile) {
+            try{
+                $fileName = $this->gestionMedia->upload($data->photo, 'profile');
+                if ($scout->getPhoto()){
+                    $this->gestionMedia->removeUpload($scout->getPhoto(), 'profile');
+                }
+                $scout->setPhoto($fileName);
+                $this->logService->log("ScoutProcessor: photo uploadée et définie via UploadFile (DTO): $fileName");
+            } catch(\Exception $e){
+                $this->logService->errorLog("ScoutProcessor: Erreur lors de l'upload de la photo: {$e->getMessage()}");
+            }
+        }elseif  (is_string($data->photo) && $data->photo !== '') {
             if ($scout->getPhoto()) {
                 $this->gestionMedia->removeUpload($scout->getPhoto(), 'profile');
             }
             $scout->setPhoto($data->photo);
+            $this->logService->log("ScoutProcessor: photo définie par une chaîne exitante (DTO): {$data->photo}");
+        }else{
+            $this->logService->log("ScoutProcessor: Pas de fichier photo uploadé via DTO et pas de chaîne photo existante fournie.");
         }
 
+        $this->logService->log("ScoutProcessor: mapDataToScout - Fin du mappage");
         return $scout;
     }
 
