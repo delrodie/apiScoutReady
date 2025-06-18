@@ -79,9 +79,11 @@ class ScoutProcessor implements ProcessorInterface
     private function handleScoutPersistence(mixed $data, array $uriVariables): Scout
     {
         $scout = null;
+        $this->logService->log('Accès au ScoutProcessor ');
 
         if (!empty($uriVariables['id'])){
             $scout = $this->allRepositories->getOneScout($uriVariables['id']);
+            $this->logService->log("Tentative de modifiaction du scout $scout.");
             if (!$scout) throw new NotFoundHttpException("Echec de modification! Le scout avec l'ID {$uriVariables['id']} n'a pas été trouvé.");
         }else{
             $this->checkIfTelephoneExists($data->telephone);
