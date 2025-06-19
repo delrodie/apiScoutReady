@@ -164,23 +164,26 @@ class ScoutProcessor implements ProcessorInterface
         return $scout;
     }
 
-    private function parseDate(?string $date): ?\DateTime
+    private function parseDate(null|string|\DateTimeInterface $date): ?\DateTimeInterface
     {
+        if ($date instanceof \DateTimeInterface) {
+            return $date;
+        }
+
         if (!$date || trim($date) === '') {
-            error_log('parseDate(): date vide');
+            error_log('parseDate(): date vide ou null');
             return null;
         }
 
         try {
-            $dt = new \DateTime($date);
-            error_log("parseDate() OK : " . $dt->format('Y-m-d'));
-            return $dt;
+            return new \DateTime($date);
         } catch (\Exception $e) {
             error_log("parseDate() ERREUR: " . $e->getMessage());
             throw new BadRequestHttpException("Format de date invalide: " . $e->getMessage());
         }
     }
-    
+
+
     private function checkIfTelephoneExists(?string $telephone): void
     {
         if (!$telephone) return;
