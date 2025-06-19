@@ -35,6 +35,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, priority: 128 }
 
+    App\EventListener\JsonExceptionListener:
+      tags:
+        - { name: kernel.event_listener, event: kernel.exception }
+
     App\Security\ApiKeyAuthenticator:
         arguments:
             $apiClientRepository: '@App\Repository\ApiClientRepository'

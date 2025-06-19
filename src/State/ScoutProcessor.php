@@ -127,6 +127,7 @@ class ScoutProcessor implements ProcessorInterface
         $scout->setMatricule($this->_gestion->validForm($data->matricule));
         $scout->setNom(strtoupper($this->_gestion->validForm($data->nom)));
         $scout->setPrenom(strtoupper($this->_gestion->validForm($data->prenom)));
+//        $scout->setDateNaissance($data->dateNaissance);
         $scout->setDateNaissance($this->parseDate($data->dateNaissance));
         $scout->setLieuNaissance($this->_gestion->validForm($data->lieuNaissance));
         $scout->setSexe(strtoupper($this->_gestion->validForm($data->sexe)));
@@ -165,12 +166,18 @@ class ScoutProcessor implements ProcessorInterface
 
     private function parseDate(?string $date): ?\DateTime
     {
-        if (!$date) return null;
+        if (!$date || trim($date) === '') {
+            error_log('parseDate(): date vide');
+            return null;
+        }
+
         try {
-            return new \DateTime($date);
-        } catch(\Exception $e) {
-            $this->logService->log("Le format de la date de naissance est invalide: {$e}");
-            throw new BadRequestHttpException("Le format de la date de naissance est invalide: {$e}");
+            $dt = new \DateTime($date);
+            error_log("parseDate() OK : " . $dt->format('Y-m-d'));
+            return $dt;
+        } catch (\Exception $e) {
+            error_log("parseDate() ERREUR: " . $e->getMessage());
+            throw new BadRequestHttpException("Format de date invalide: " . $e->getMessage());
         }
     }
     
