@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -66,7 +67,7 @@ class ApiScoutPatchController extends AbstractController
         }
 
         if ($dateNaissance = $request->get('dateNaissance')){
-            $scout->setDateNaissance($dateNaissance);
+            $scout->setDateNaissance($this->parseDate($dateNaissance));
         }
 
         if ($lieuNaissance = $request->get('lieuNaissance')){
@@ -110,6 +111,25 @@ class ApiScoutPatchController extends AbstractController
 
             $photo = $this->gestionMedia->upload($photoFile, 'profile');
             $scout->setPhoto($photo);
+        }
+    }
+
+    private function parseDate(null|string|\DateTimeInterface $date): ?\DateTimeInterface
+    {
+        if ($date instanceof \DateTimeInterface) {
+            return $date;
+        }
+
+        if (!$date || trim($date) === '') {
+            error_log('parseDate(): date vide ou null');
+            return null;
+        }
+
+        try {
+            return new \DateTime($date);
+        } catch (\Exception $e) {
+            error_log("parseDate() ERREUR: " . $e->getMessage());
+            throw new BadRequestHttpException("Format de date invalide: " . $e->getMessage());
         }
     }
 }
