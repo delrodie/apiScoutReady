@@ -61,7 +61,7 @@ class Scout
     #[ORM\Column(length: 255, unique: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $matricule = null;
 
     #[ORM\Column(length: 255, nullable: true)]

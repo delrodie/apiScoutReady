@@ -16,14 +16,31 @@ class Gestion
 
     public function generateCode(?string $statut): string
     {
-        //CF2504182554 SC2504186547
-        $initial = $statut === 'ADULTE' ? 'CF' : 'SC';
+        //CF2504182554-A4 SC2504186547-3C
+        $prefix = $statut === 'ADULTE' ? 'CF' : 'SC';
         do{
             $variable = str_pad((int)random_int(0, 9999), 4, '0', STR_PAD_LEFT);
-            $code = $initial.date('ymd') . $variable;
+//            $unique = strtoupper(bin2hex($variable));
+            $base = $prefix.date('ymd').$variable;
+            $checksum = strtoupper(substr(hash('crc32b', $base), 0, 2));
+            $code = $base.'-'.$checksum;
         }while($this->allRepositories->getOneScout(null, $code));
 
         return $code;
+    }
+
+    public function verificationChecksum(string $code)
+    {
+        // Vérifie le format général
+        if (!preg_match('/^[A-Z]{2}\d{6}[A-Z0-9]{6}-[A-F0-9]{2}$/', $code)){
+            return false;
+        }
+
+        // Separation des parties
+        [$base, $checkum] = explode('-', $code);
+        $expected = strtoupper(substr(hash('crc32b', $base), 0, 2));
+
+        return $checkum === $expected;
     }
 
     public function saveUtilisation(?object $scout, ?array $param): Utilisation|false
