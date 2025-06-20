@@ -29,10 +29,10 @@ class Gestion
         return $code;
     }
 
-    public function verificationChecksum(string $code)
+    public function verificationChecksum(string $code): bool
     {
         // Vérifie le format général
-        if (!preg_match('/^[A-Z]{2}\d{6}[A-Z0-9]{6}-[A-F0-9]{2}$/', $code)){
+        if (!preg_match('/^[A-Z]{2}\d{6}\d{4}-[A-F0-9]{2}$/', $code)){
             return false;
         }
 

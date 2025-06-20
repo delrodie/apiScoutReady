@@ -21,7 +21,11 @@ class HomeController extends AbstractController
     #[Route('/')]
     public function index(): Response
     {
-        dd($this->gestion->generateCode('ADULTE'));
+        // CF2506204147-F5
+        $code = $this->gestion->generateCode('ADULTE'); // CF2506204963-CE"
+        $verification = $this->gestion->verificationChecksum($code);
+
+        dd("$code - $verification");
         return $this->render('home/index.html.twig');
     }
 }

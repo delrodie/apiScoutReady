@@ -7,9 +7,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\GroupSequenceProviderInterface;
+use App\Validator\Constraints as AppAssert;
 
 class ScoutInput implements GroupSequenceProviderInterface
 {
+    #[AppAssert\ValidScoutCode]
+    public ?string $code;
+
     //public ?string $code = null;
     public ?string $matricule = null;
     
