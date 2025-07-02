@@ -106,6 +106,9 @@ class Scout
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $qrCode = null;
 
+    #[ORM\OneToOne(mappedBy: 'scout', cascade: ['persist', 'remove'])]
+    private ?Complementaire $complementaire = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -299,6 +302,28 @@ class Scout
     public function setQrCode(?string $qrCode): static
     {
         $this->qrCode = $qrCode;
+
+        return $this;
+    }
+
+    public function getComplementaire(): ?Complementaire
+    {
+        return $this->complementaire;
+    }
+
+    public function setComplementaire(?Complementaire $complementaire): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($complementaire === null && $this->complementaire !== null) {
+            $this->complementaire->setScout(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($complementaire !== null && $complementaire->getScout() !== $this) {
+            $complementaire->setScout($this);
+        }
+
+        $this->complementaire = $complementaire;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Asn;
 use App\Repository\ApiClientRepository;
 use App\Repository\AsnRepository;
+use App\Repository\ComplementaireRepository;
 use App\Repository\DistrictRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\RegionRepository;
@@ -23,6 +24,7 @@ class AllRepositories
         private ScoutRepository       $scoutRepository,
         private ApiClientRepository   $apiClientRepository,
         private UtilisationRepository $utilisationRepository,
+        private ComplementaireRepository $complementaireRepository,
     )
     {
     }
@@ -190,5 +192,19 @@ class AllRepositories
             Variables::UTILISATEUR_STATUT_APPROUVE,
             Variables::UTILISATEUR_STATUT_ATTENTE
         );
+    }
+
+    public function getOneComplementaire($id = null, $scout = null)
+    {
+        if($scout){
+            return $this->complementaireRepository->findOneBy(['scout' => $scout], ['id' => 'DESC']);
+        }
+
+        return $this->complementaireRepository->findOneBy(['id' => $id]);
+    }
+
+    public function getAllComplementaire()
+    {
+        return $this->complementaireRepository->findAll();
     }
 }

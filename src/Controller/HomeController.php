@@ -22,10 +22,10 @@ class HomeController extends AbstractController
     public function index(): Response
     {
         // CF2506204147-F5
-        $code = $this->gestion->generateCode('ADULTE'); // CF2506204963-CE"
-        $verification = $this->gestion->verificationChecksum($code);
+//        $code = $this->gestion->generateCode('ADULTE'); // CF2506204963-CE"
+//        $verification = $this->gestion->verificationChecksum($code);
 
-        dd("$code - $verification");
+        //dd("$code - $verification");
         return $this->render('home/index.html.twig');
     }
 }

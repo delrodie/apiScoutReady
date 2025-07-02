@@ -2,11 +2,12 @@
 
 namespace App\DTO;
 
+use AllowDynamicProperties;
 use App\Entity\Scout;
 use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ScoutOutput
+#[AllowDynamicProperties] class ScoutOutput
 {
 
     public ?int $id = null;
@@ -25,6 +26,7 @@ class ScoutOutput
     public ?string $statut = null;
     public ?string $telephoneParent = null;
     public ?string $qrCode = null;
+    public ?string $complemenatire = null;
     public ?object $groupe = null;
 
     public static function mapToOut(Scout $scout,string $baseUrl): self
@@ -40,11 +42,12 @@ class ScoutOutput
         $dto->lieuNaissance = $scout->getLieuNaissance();
         $dto->telephone = $scout->getTelephone();
         $dto->email = $scout->getEmail();
-        $dto->photo = $baseUrl.'/scouts/profile/'.$scout->getPhoto();
+        $dto->photo = $scout->getPhoto() ? $baseUrl.'/scouts/profile/'.$scout->getPhoto() : null;
         $dto->fonction = $scout->getFonction();
         $dto->branche = $scout->getBranche();
         $dto->statut = $scout->getStatut();
         $dto->telephoneParent = $scout->isTelephoneParent();
+        $dto->complementaire = $scout->getComplementaire();
         $dto->qrCode = $baseUrl.'/qrcode/'.$scout->getQrCode();
         $dto->groupe = GroupeOutput::mapToOut($scout->getGroupe()) ;
 
