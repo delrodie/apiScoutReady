@@ -26,11 +26,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
     public ?string $statut = null;
     public ?string $telephoneParent = null;
     public ?string $qrCode = null;
-<<<<<<< HEAD
     public ?object $complementaire = null;
-=======
-    public ?string $complemenatire = null;
->>>>>>> v1.2.0
     public ?object $groupe = null;
 
     public static function mapToOut(Scout $scout,string $baseUrl): self
