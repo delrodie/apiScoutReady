@@ -98,6 +98,16 @@ class ScoutRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
     }
 
+    public function findAllByBranche(?string $branche)
+    {
+        return $this->query()
+            ->where('s.branche = :branche')
+            ->setParameter('branche', $branche)
+            ->orderBy('s.nom', 'ASC')
+            ->addOrderBy('s.prenom', 'ASC')
+            ->getQuery()->getResult();
+    }
+
     public function query()
     {
         return $this->createQueryBuilder('s')

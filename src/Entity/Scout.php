@@ -46,6 +46,7 @@ use Doctrine\ORM\Mapping as ORM;
     'code' => 'partial',
     'matricule' => 'partial',
     'telephone' => 'partial',
+    'branche' => 'partial',
     'groupe' => 'exact',
     'groupe.district' => 'exact',
     'groupe.district.region' => 'exact',

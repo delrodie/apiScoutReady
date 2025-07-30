@@ -123,6 +123,7 @@ class AllRepositories
             Variables::REGION => $this->scoutRepository->findAllByRegion($variable),
             Variables::ASN => $this->scoutRepository->findAllByAsn($variable),
             Variables::TELEPHONE => $this->scoutRepository->findAllByTelephone($variable),
+            Variables::BRANCHE => $this->scoutRepository->findAllByBranche($variable),
             default => $this->scoutRepository->findAllScout(),
         };
     }

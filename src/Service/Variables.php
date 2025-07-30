@@ -14,6 +14,7 @@ class Variables
     const REGION = 'REGION';
     const ASN = 'ASN';
     const PAGE = 'PAGE';
+    const BRANCHE = 'BRANCHE';
 
     // STATUT UTILISATEUR
     const UTILISATEUR_STATUT_ATTENTE = 0;
